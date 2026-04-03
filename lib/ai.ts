@@ -210,17 +210,99 @@ export async function generateMoodBoardPhase2(
 export async function analyzeCompetitor(
   website: string,
 ): Promise<Partial<Competitor>> {
-  const prompt = `You are a brand analyst. Analyze the competitor at this website: ${website}
+  const prompt = `You are a brand analyst. Visit the website ${website} and extract the following information:
 
-Based on your knowledge of this company/brand (or your best inference from the URL), provide:
+## Brand Identity
+
+**Colors**
+- List all primary and secondary brand colors with hex codes if identifiable (inspect CSS, buttons, headers, logos)
+
+**Typography**
+- Primary font (headings): Return ONLY the font family name (e.g. "Inter", "Playfair Display"). Do NOT include fallbacks like "Arial, Helvetica, sans-serif".
+- Secondary font (body text): Same rule — single font family name only.
+
+**Logo**
+- Describe the logo briefly
+- logoUrl: The direct URL to the logo image file (look for <img> in the header/navbar, or an SVG logo). Must be an absolute URL.
+
+**Favicon**
+- faviconUrl: The direct URL to the favicon (check <link rel="icon"> or <link rel="shortcut icon"> in the HTML head). Must be an absolute URL. If relative, prepend the site's origin.
+
+---
+
+## Brand Messaging
+
+**Tagline** (if present)
+
+**Mission Statement** (if present)
+
+**Vision Statement** (if present)
+
+**Brand Voice** (1–2 sentences describing tone: formal/casual, bold/subtle, etc.)
+
+---
+
+## Social Media Presence
+
+Find and list ONLY the official social media links that are actually present on the website (usually in the footer or header). Check for:
+- Instagram
+- LinkedIn
+- X (Twitter)
+- TikTok
+- YouTube
+- Facebook
+
+IMPORTANT: Only include a social media channel if you can find an actual link to it on the website. Do NOT guess or fabricate URLs. If a channel has no link on the site, omit it entirely from the socialMedia object — do NOT include it with a null value.
+
+---
+
+## Competitive Analysis
+
 - name: the company/brand name
 - description: 1-2 sentence description of what they do
 - strengths: their key brand/business strengths (2-3 sentences)
 - weaknesses: their brand/business weaknesses or gaps (2-3 sentences)
 - visualStyle: array of 3-5 visual style keywords that describe their brand aesthetic
-- brand: { colors: array of 3-5 hex color strings from their brand, fonts: array of font names they likely use, imagery: description of their image style, positioning: their market positioning in 1-2 sentences }
+- positioning: their market positioning in 1-2 sentences
 
-Return ONLY a JSON object wrapped in \`\`\`json code fences.`;
+---
+
+Return ONLY a JSON object wrapped in \`\`\`json code fences with this structure:
+\`\`\`json
+{
+  "name": "...",
+  "description": "...",
+  "strengths": "...",
+  "weaknesses": "...",
+  "visualStyle": ["...", "..."],
+  "brand": {
+    "colors": ["#hex1", "#hex2", "..."],
+    "headingFont": "Actual Font Name",
+    "bodyFont": "Actual Font Name",
+    "logoDescription": "...",
+    "logoUrl": "https://... or null",
+    "faviconUrl": "https://... or null",
+    "tagline": "... or null",
+    "mission": "... or null",
+    "vision": "... or null",
+    "brandVoice": "...",
+    "positioning": "...",
+    "imagery": "...",
+    "fonts": ["heading font name", "body font name"],
+    "socialMedia": {
+      // ONLY include channels that were actually found on the website
+      // e.g. "instagram": "https://instagram.com/brandname"
+      // Omit any channel not found — do NOT set to null
+    }
+  }
+}
+\`\`\`
+
+IMPORTANT:
+- For fonts, return ONLY the single font family name (e.g. "Inter"), never CSS font stacks with fallbacks.
+- For socialMedia, only include channels you actually found linked on the website. Omit all others.
+- For logoUrl and faviconUrl, return absolute URLs. If not found, use null.
+- If something cannot be determined from the website, use null rather than guessing.`;
 
   const response = await callClaude(prompt);
   return parseJSON<Partial<Competitor>>(response);

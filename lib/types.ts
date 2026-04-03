@@ -8,9 +8,30 @@ export interface Persona {
   channels: string[];
 }
 
+export interface CompetitorSocialMedia {
+  instagram?: string;
+  linkedin?: string;
+  twitter?: string;
+  tiktok?: string;
+  youtube?: string;
+  facebook?: string;
+}
+
 export interface CompetitorBrand {
-  logo?: string;
   colors: string[];
+  headingFont: string;
+  bodyFont: string;
+  accentFont?: string;
+  logoDescription: string;
+  logoUrl?: string;
+  faviconUrl?: string;
+  tagline?: string;
+  mission?: string;
+  vision?: string;
+  brandVoice?: string;
+  socialMedia?: CompetitorSocialMedia;
+  // legacy fields kept for backwards compat
+  logo?: string;
   fonts: string[];
   imagery: string;
   positioning: string;

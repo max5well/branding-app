@@ -42,7 +42,7 @@ async function sleep(ms: number) {
 
 async function callRecraft(
   prompt: string,
-  style: "logo_raster" | "icon",
+  style: "digital_illustration" | "vector_illustration",
   colors: { hex: string }[],
   retries = 2,
 ): Promise<{ imageBase64: string; mimeType: string }> {
@@ -209,7 +209,7 @@ export async function POST(req: NextRequest) {
       try {
         const logoResult = await callRecraft(
           prompts.logo,
-          "logo_raster",
+          "digital_illustration",
           brandColors,
         );
         results.logo = {
@@ -226,7 +226,7 @@ export async function POST(req: NextRequest) {
       try {
         const iconsResult = await callRecraft(
           prompts.icons,
-          "icon",
+          "vector_illustration",
           brandColors,
         );
         results.icons = {
