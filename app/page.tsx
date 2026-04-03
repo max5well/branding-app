@@ -1,65 +1,258 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
+import { useBrandStore } from "@/lib/store";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  Plus,
+  ArrowRight,
+  Trash2,
+  Sparkles,
+  Palette,
+  Target,
+  Layers,
+} from "lucide-react";
+
+export default function HomePage() {
+  const router = useRouter();
+  const {
+    projects,
+    createProject,
+    deleteProject,
+    setActiveProject,
+  } = useBrandStore();
+  const [newProjectName, setNewProjectName] = useState("");
+  const [showNewDialog, setShowNewDialog] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+
+  const handleCreateProject = () => {
+    if (!newProjectName.trim()) return;
+    const id = createProject(newProjectName.trim());
+    setActiveProject(id);
+    setShowNewDialog(false);
+    setNewProjectName("");
+    router.push("/workshop/strategy");
+  };
+
+  const handleOpenProject = (id: string) => {
+    setActiveProject(id);
+    router.push("/workshop");
+  };
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="min-h-screen flex flex-col">
+      {/* Header */}
+      <header className="border-b border-border/50 bg-card/30 backdrop-blur-sm">
+        <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-bold tracking-tight">BrandForge</h1>
+            <p className="text-xs text-muted-foreground">
+              Professional Brand Identity Workshop
+            </p>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+      </header>
+
+      {/* Hero */}
+      <section className="py-20 px-6">
+        <div className="max-w-3xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium mb-6">
+              <Sparkles className="w-3 h-3" />
+              AI-Enhanced Branding Workshop
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4 leading-tight">
+              Build your brand identity
+              <br />
+              <span className="text-muted-foreground">
+                like a top-tier agency
+              </span>
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-xl mx-auto mb-8">
+              A guided, step-by-step workshop that produces a complete brand
+              guideline. Strategy, personality, creative direction, and visual
+              identity — all in one place.
+            </p>
+
+            <Dialog open={showNewDialog} onOpenChange={setShowNewDialog}>
+              <DialogTrigger
+                render={<Button size="lg" className="gap-2 text-base px-8" />}
+              >
+                <Plus className="w-5 h-5" />
+                Start New Project
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>New Brand Project</DialogTitle>
+                  <DialogDescription>
+                    Give your project a name to get started.
+                  </DialogDescription>
+                </DialogHeader>
+                <Input
+                  placeholder="My Brand"
+                  value={newProjectName}
+                  onChange={(e) => setNewProjectName(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleCreateProject()}
+                  autoFocus
+                />
+                <DialogFooter>
+                  <Button
+                    onClick={handleCreateProject}
+                    disabled={!newProjectName.trim()}
+                  >
+                    Create Project
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </motion.div>
         </div>
-      </main>
+      </section>
+
+      {/* Features */}
+      <section className="px-6 pb-16">
+        <div className="max-w-4xl mx-auto grid grid-cols-3 gap-6">
+          {[
+            {
+              icon: Target,
+              title: "Brand Strategy",
+              desc: "Define your mission, audience, and competitive landscape",
+            },
+            {
+              icon: Palette,
+              title: "Creative Direction",
+              desc: "AI-generated mood boards with colors, typography, and visual style",
+            },
+            {
+              icon: Layers,
+              title: "Brand Guidelines",
+              desc: "Export a complete, professional brand guideline document",
+            },
+          ].map((f, i) => (
+            <motion.div
+              key={f.title}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 + i * 0.1 }}
+              className="p-6 rounded-xl border border-border/50 bg-card/30"
+            >
+              <f.icon className="w-8 h-8 text-primary mb-3" />
+              <h3 className="font-semibold mb-1">{f.title}</h3>
+              <p className="text-sm text-muted-foreground">{f.desc}</p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* Existing Projects */}
+      {projects.length > 0 && (
+        <section className="px-6 pb-20">
+          <div className="max-w-4xl mx-auto">
+            <h3 className="text-lg font-semibold mb-4">Your Projects</h3>
+            <div className="grid gap-3">
+              <AnimatePresence>
+                {projects.map((project) => (
+                  <motion.div
+                    key={project.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    className="flex items-center justify-between p-4 rounded-xl border border-border/50 bg-card/30 hover:bg-card/50 transition-colors group"
+                  >
+                    <button
+                      onClick={() => handleOpenProject(project.id)}
+                      className="flex-1 text-left"
+                    >
+                      <h4 className="font-medium">
+                        {project.name || "Untitled"}
+                      </h4>
+                      <div className="flex items-center gap-3 text-xs text-muted-foreground mt-0.5">
+                        <span>Phase {project.currentPhase}/6</span>
+                        <span>
+                          Updated{" "}
+                          {new Date(project.updatedAt).toLocaleDateString()}
+                        </span>
+                      </div>
+                    </button>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleOpenProject(project.id)}
+                        className="gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        Continue
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </Button>
+
+                      <Dialog
+                        open={deleteId === project.id}
+                        onOpenChange={(open) =>
+                          setDeleteId(open ? project.id : null)
+                        }
+                      >
+                        <DialogTrigger
+                          render={
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                            />
+                          }
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Delete Project</DialogTitle>
+                            <DialogDescription>
+                              Are you sure you want to delete &quot;
+                              {project.name}&quot;? This cannot be undone.
+                            </DialogDescription>
+                          </DialogHeader>
+                          <DialogFooter>
+                            <Button
+                              variant="outline"
+                              onClick={() => setDeleteId(null)}
+                            >
+                              Cancel
+                            </Button>
+                            <Button
+                              variant="destructive"
+                              onClick={() => {
+                                deleteProject(project.id);
+                                setDeleteId(null);
+                              }}
+                            >
+                              Delete
+                            </Button>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   );
 }

@@ -1,0 +1,177 @@
+import { PhaseInfo } from "./types";
+
+export const PHASES: PhaseInfo[] = [
+  {
+    number: 1,
+    name: "Strategy",
+    path: "/workshop/strategy",
+    description: "Define your brand foundation",
+  },
+  {
+    number: 2,
+    name: "Personality",
+    path: "/workshop/personality",
+    description: "Choose your brand archetypes",
+  },
+  {
+    number: 3,
+    name: "Creative Brief",
+    path: "/workshop/creative-brief",
+    description: "Shape your creative direction",
+  },
+  {
+    number: 4,
+    name: "Mood Boards",
+    path: "/workshop/mood-boards",
+    description: "Generate visual directions",
+  },
+  {
+    number: 5,
+    name: "Refinement",
+    path: "/workshop/refinement",
+    description: "Fine-tune your brand",
+  },
+  {
+    number: 6,
+    name: "Guidelines",
+    path: "/workshop/guidelines",
+    description: "Your brand guideline",
+  },
+];
+
+export const BUSINESS_MODELS = [
+  "SaaS",
+  "E-commerce",
+  "Service",
+  "Marketplace",
+  "Subscription",
+  "Freemium",
+  "Agency",
+  "Non-profit",
+  "Other",
+];
+
+export const SALES_CHANNELS = [
+  "B2B",
+  "B2C",
+  "B2G",
+  "D2C",
+  "Marketplace",
+  "Enterprise",
+  "Wholesale",
+  "Franchise",
+];
+
+export const AUDIENCE_CHANNELS = [
+  "Instagram",
+  "LinkedIn",
+  "TikTok",
+  "Twitter/X",
+  "Reddit",
+  "YouTube",
+  "Podcasts",
+  "Blogs",
+  "Events",
+  "Other",
+];
+
+export const BRAND_TRAITS = [
+  "Bold",
+  "Elegant",
+  "Minimal",
+  "Playful",
+  "Organic",
+  "Geometric",
+  "Retro",
+  "Futuristic",
+  "Warm",
+  "Clean",
+  "Raw",
+  "Luxurious",
+  "Industrial",
+  "Soft",
+  "Vibrant",
+  "Muted",
+  "Handcrafted",
+  "Techy",
+  "Natural",
+  "Architectural",
+  "Whimsical",
+  "Sophisticated",
+  "Edgy",
+  "Classic",
+  "Modern",
+  "Abstract",
+];
+
+export const BRAND_TONES = [
+  "Friendly",
+  "Authoritative",
+  "Witty",
+  "Direct",
+  "Empathetic",
+  "Provocative",
+  "Professional",
+  "Casual",
+  "Inspirational",
+  "Conversational",
+  "Academic",
+  "Playful",
+  "Confident",
+  "Warm",
+  "Bold",
+  "Humble",
+  "Energetic",
+  "Calm",
+  "Irreverent",
+  "Thoughtful",
+];
+
+export const BRAND_EXPERIENCES = [
+  "Trust",
+  "Excitement",
+  "Calm",
+  "Empowerment",
+  "Nostalgia",
+  "Curiosity",
+  "Belonging",
+  "Luxury",
+  "Freedom",
+  "Safety",
+  "Joy",
+  "Wonder",
+  "Confidence",
+  "Intimacy",
+  "Relief",
+  "Pride",
+  "Adventure",
+  "Peace",
+  "Motivation",
+  "Delight",
+];
+
+export const VISUAL_STYLE_KEYWORDS = [
+  "minimal",
+  "bold",
+  "corporate",
+  "playful",
+  "dark",
+  "light",
+  "colorful",
+  "monochrome",
+  "vintage",
+  "modern",
+  "brutalist",
+  "elegant",
+  "quirky",
+  "professional",
+  "artistic",
+];
+
+export const FAMOUS_FOR_EXAMPLES = [
+  { brand: "Apple", thing: "Design simplicity" },
+  { brand: "Patagonia", thing: "Environmental activism" },
+  { brand: "Nike", thing: "Empowering athletes" },
+  { brand: "Airbnb", thing: "Belonging anywhere" },
+  { brand: "Tesla", thing: "Sustainable innovation" },
+];

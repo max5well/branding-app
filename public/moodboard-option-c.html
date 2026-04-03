@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mood Board — Option C: Horizontal Bands</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --color-1: #4A2D0A;
+    --color-2: #E2D9C8;
+    --color-3: #6366F1;
+    --color-4: #1A1A3E;
+    --font-heading: 'Playfair Display', serif;
+    --font-body: 'Inter', sans-serif;
+  }
+
+  body {
+    font-family: var(--font-body);
+    background: #F8F7F4;
+    padding: 40px;
+    color: #1a1a1a;
+  }
+
+  .option-label {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .option-label h1 {
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    color: #999;
+  }
+  .option-label p {
+    font-size: 12px;
+    color: #bbb;
+    margin-top: 4px;
+  }
+
+  .moodboard {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  /* --- BAND 1: HERO --- */
+  .band-hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 360px;
+  }
+  .band-hero .hero-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .band-hero .hero-content {
+    background: var(--color-4);
+    padding: 60px 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .band-hero .hero-content .logo-placeholder {
+    width: 100px;
+    height: 56px;
+    border-radius: 6px;
+    border: 2px solid rgba(255,255,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-family: var(--font-heading);
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 28px;
+  }
+  .band-hero .hero-content h2 {
+    font-family: var(--font-heading);
+    font-size: 36px;
+    font-weight: 400;
+    line-height: 1.2;
+    color: white;
+    margin-bottom: 16px;
+  }
+  .band-hero .hero-content p {
+    font-size: 14px;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.6);
+    max-width: 380px;
+  }
+
+  .img-placeholder {
+    width: 100%;
+    height: 100%;
+    min-height: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  /* --- BAND 2: SYSTEM --- */
+  .band-system {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    min-height: 220px;
+  }
+
+  .system-typography {
+    background: white;
+    padding: 32px 28px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .font-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #bbb;
+    margin-bottom: 4px;
+  }
+  .font-heading-preview {
+    font-family: var(--font-heading);
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--color-4);
+    margin-bottom: 20px;
+    line-height: 1.1;
+  }
+  .font-body-preview {
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: #666;
+    line-height: 1.5;
+  }
+
+  .system-colors {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+  }
+  .swatch {
+    padding: 14px 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  .swatch-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .swatch-hex {
+    font-size: 10px;
+    font-family: monospace;
+    margin-top: 2px;
+  }
+  .swatch.light-text .swatch-label,
+  .swatch.light-text .swatch-hex { color: rgba(255,255,255,0.9); }
+  .swatch.dark-text .swatch-label,
+  .swatch.dark-text .swatch-hex { color: rgba(0,0,0,0.5); }
+
+  .system-icons {
+    background: var(--color-3);
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .system-icons .icon-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 16px;
+  }
+  .icon-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+  }
+  .icon-grid .icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 6px;
+    border: 1.5px solid rgba(255,255,255,0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 15px;
+  }
+
+  /* --- BAND 3: GALLERY --- */
+  .band-gallery {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    min-height: 300px;
+  }
+  .band-gallery .gallery-message {
+    background: var(--color-4);
+    padding: 40px 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .band-gallery .gallery-message h2 {
+    font-family: var(--font-heading);
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 1.25;
+    color: var(--color-3);
+    margin-bottom: 16px;
+  }
+  .band-gallery .gallery-message p {
+    font-size: 13px;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.7);
+  }
+  .band-gallery .gallery-message .tagline {
+    margin-top: 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: white;
+  }
+</style>
+</head>
+<body>
+
+<div class="option-label">
+  <h1>Option C: Horizontal Bands</h1>
+  <p>Full-width stacked rows &mdash; cinematic, immersive, presentation-ready</p>
+</div>
+
+<div class="moodboard">
+
+  <!-- Band 1: Hero — half image, half brand intro -->
+  <div class="band-hero">
+    <div class="hero-image">
+      <div class="img-placeholder" style="background: linear-gradient(135deg, #E2D9C8 0%, #c4b8a4 100%);">
+        Mood Image 1<br><small>Lifestyle / atmosphere</small>
+      </div>
+    </div>
+    <div class="hero-content">
+      <div class="logo-placeholder">nox</div>
+      <h2>This is the night train as it should be.</h2>
+      <p>From 2027 Nox will offer overnight trains across Europe with 100% personal rooms.</p>
+    </div>
+  </div>
+
+  <!-- Band 2: Design System — typography | colors | iconography -->
+  <div class="band-system">
+    <div class="system-typography">
+      <div class="font-label">Headline</div>
+      <div class="font-heading-preview">Season Mix</div>
+      <div class="font-label">Body</div>
+      <div class="font-body-preview">Denim Regular — the quick brown fox jumps over the lazy dog</div>
+    </div>
+
+    <div class="system-colors">
+      <div class="swatch light-text" style="background: var(--color-1);">
+        <div class="swatch-label">Earth</div>
+        <div class="swatch-hex">#4A2D0A</div>
+      </div>
+      <div class="swatch dark-text" style="background: var(--color-2);">
+        <div class="swatch-label">Linen</div>
+        <div class="swatch-hex">#E2D9C8</div>
+      </div>
+      <div class="swatch light-text" style="background: var(--color-3);">
+        <div class="swatch-label">Indigo</div>
+        <div class="swatch-hex">#6366F1</div>
+      </div>
+      <div class="swatch light-text" style="background: var(--color-4);">
+        <div class="swatch-label">Midnight</div>
+        <div class="swatch-hex">#1A1A3E</div>
+      </div>
+    </div>
+
+    <div class="system-icons">
+      <div class="icon-label">Iconography</div>
+      <div class="icon-grid">
+        <div class="icon">&#x2731;</div>
+        <div class="icon">&#x25CE;</div>
+        <div class="icon">&#x271A;</div>
+        <div class="icon">&#x2630;</div>
+        <div class="icon">&#x23FB;</div>
+        <div class="icon">&#x221E;</div>
+        <div class="icon">&#x263E;</div>
+        <div class="icon">&#x21C4;</div>
+        <div class="icon">&#x25B6;</div>
+        <div class="icon">&#x266B;</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Band 3: Gallery — image | brand message | image -->
+  <div class="band-gallery">
+    <div class="hero-image">
+      <div class="img-placeholder" style="background: linear-gradient(180deg, #1A1A3E 0%, #2a2a5e 100%);">
+        Mood Image 2<br><small>Product / detail</small>
+      </div>
+    </div>
+
+    <div class="gallery-message">
+      <h2>You sleep.<br>We get you there.</h2>
+      <p>We want to build a real alternative to short haul flights across Europe.</p>
+      <p class="tagline">Sleep. Travel. Arrive.</p>
+    </div>
+
+    <div class="hero-image">
+      <div class="img-placeholder" style="background: linear-gradient(180deg, #2a2a5e 0%, #6366F1 100%);">
+        Mood Image 3<br><small>Atmosphere</small>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
