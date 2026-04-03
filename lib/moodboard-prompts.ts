@@ -95,12 +95,11 @@ function buildContext(project: BrandProject): BrandContext {
     ),
   ];
 
-  // Build a narrative archetype combination description
   let archetypeCombination = "";
   if (primary && secondary) {
-    archetypeCombination = `The brand leads with ${primary.name} (${primary.tagline}) — ${primary.keywords.join(", ")} — blended with ${secondary.name} (${secondary.tagline}) — ${secondary.keywords.join(", ")}. This means the visual identity should feel ${primary.keywords[0].toLowerCase()} yet ${secondary.keywords[1].toLowerCase()}, ${primary.keywords[1].toLowerCase()} yet ${secondary.keywords[0].toLowerCase()}.`;
+    archetypeCombination = `The brand leads with ${primary.name} (${primary.tagline}) — ${primary.keywords.join(", ")} — blended with ${secondary.name} (${secondary.tagline}) — ${secondary.keywords.join(", ")}.`;
   } else if (primary) {
-    archetypeCombination = `The brand embodies ${primary.name} (${primary.tagline}) — ${primary.keywords.join(", ")}. The visual identity should feel ${primary.keywords.map((k) => k.toLowerCase()).join(", ")}.`;
+    archetypeCombination = `The brand embodies ${primary.name} (${primary.tagline}) — ${primary.keywords.join(", ")}.`;
   }
 
   return {
@@ -120,108 +119,150 @@ function buildContext(project: BrandProject): BrandContext {
   };
 }
 
-// ─── Dynamic direction derivation ───
-// Instead of hardcoded hints, derive 3 directions from the actual brand data
+// ──────────────────────────────────────────────────────────────────────────────
+// DESIGN ANALYSIS SYSTEM
+//
+// Instead of prescribing "serif + muted" or "geometric + vibrant," we break the
+// brand data into separate DESIGN DIMENSIONS. Each dimension is analyzed on its
+// own and produces design implications. The model reads these as independent
+// inputs and synthesizes them through its assigned creative philosophy.
+//
+// The 3 options diverge via ABSTRACT PHILOSOPHIES — not static templates:
+//   Option 1 "True to Core"      → Most direct expression of brand identity
+//   Option 2 "Audience-First"    → Optimized for who sees it and where
+//   Option 3 "Category Breaker"  → Owns the whitespace competitors leave open
+//
+// What "true to core" MEANS depends entirely on the brand data. A playful brand
+// gets playful Option 1. A corporate brand gets corporate Option 1.
+// ──────────────────────────────────────────────────────────────────────────────
 
-function deriveColorDirections(ctx: BrandContext): string[] {
-  const directions: string[] = [];
+// Creative philosophies — abstract enough to not predetermine outputs,
+// concrete enough to force divergence.
+const CREATIVE_PHILOSOPHIES = [
+  {
+    id: "true-to-core",
+    label: "True to Core",
+    briefing: `Your concept is the most DIRECT expression of the brand's identity.
+Lean heavily into Dimension 1 (archetype) and Dimension 4 (creative brief).
+The audience and competitive context inform your choices, but identity leads.
+Ask yourself: "If I could only show ONE palette/pairing to explain what this brand IS, what would it be?"
+This is the concept the founder would immediately recognize as 'us.'`,
+  },
+  {
+    id: "audience-first",
+    label: "Audience-First",
+    briefing: `Your concept is optimized for WHERE and BY WHOM the brand is experienced.
+Lean heavily into Dimension 2 (audience) and Dimension 3 (competitive context).
+The brand identity is still present, but filtered through audience expectations.
+Ask yourself: "What would stop THIS audience on THESE channels — while still feeling like this brand?"
+This is the concept that performs best in the real world.`,
+  },
+  {
+    id: "category-breaker",
+    label: "Category Breaker",
+    briefing: `Your concept deliberately ZAGS where the category zigs.
+Lean heavily into Dimension 3 (competitive landscape) and Dimension 5 (anti-references).
+Combine the brand's personality dimensions (1+2) in the most unexpected way that still feels authentic.
+Ask yourself: "What would make this brand IMPOSSIBLE to confuse with any competitor?"
+This is the concept that redefines the visual category.`,
+  },
+];
 
-  // Direction 1: Archetype-driven — pull from the archetype's natural visual territory
+// ── Build per-dimension analysis blocks ──
+
+function buildDimension1(ctx: BrandContext): string {
+  // ARCHETYPE & PERSONALITY — what the brand IS
+  const parts: string[] = [];
+
   if (ctx.primary) {
-    const archetypeKeywords = ctx.primary.keywords
-      .map((k) => k.toLowerCase())
-      .join(", ");
-    const trait1 = ctx.brief.traits[0] || "distinctive";
-    const trait2 = ctx.brief.traits[1] || "memorable";
-    directions.push(
-      `ARCHETYPE-LED: Build the palette from the emotional core of ${ctx.primary.name}. The colors should viscerally communicate ${archetypeKeywords}. Lean into ${trait1} and ${trait2}. Think about what colors ${ctx.primary.examples.join(", ")} use and WHY — then find your own unique expression of that same emotional territory.`,
-    );
-  } else {
-    directions.push(
-      `BRAND-LED: Build the palette directly from the brand's mission ("${ctx.brand.mission}") and the experience it creates ("${ctx.brief.experience.join(", ")}"). What colors make someone FEEL that experience?`,
-    );
+    parts.push(`Primary archetype: ${ctx.primary.name} — "${ctx.primary.tagline}"`);
+    parts.push(`Core qualities: ${ctx.primary.keywords.join(", ")}`);
+    parts.push(`Reference brands: ${ctx.primary.examples.join(", ")}`);
+  }
+  if (ctx.secondary) {
+    parts.push(`Secondary archetype: ${ctx.secondary.name} — "${ctx.secondary.tagline}"`);
+    parts.push(`Blended qualities: ${ctx.secondary.keywords.join(", ")}`);
+  }
+  if (ctx.personalitySummary) {
+    parts.push(`Personality narrative: ${ctx.personalitySummary}`);
+  }
+  if (parts.length === 0) {
+    parts.push(`Brand description: ${ctx.brand.description}`);
+    parts.push(`Mission: ${ctx.brand.mission}`);
   }
 
-  // Direction 2: Audience-driven — what resonates with the target personas
-  if (ctx.personaAgeRanges.length > 0 && ctx.personaChannels.length > 0) {
-    const channels = ctx.personaChannels.slice(0, 3).join(", ");
-    const ages = ctx.personaAgeRanges.join(" and ");
-    const notThis = ctx.brief.notThis.slice(0, 2).join(" or ");
-    directions.push(
-      `AUDIENCE-LED: Design for ${ages} audiences who live on ${channels}. The palette must perform on digital-first channels — high contrast on mobile screens, thumb-stopping in social feeds. It should feel ${ctx.brief.tone.join(", ")} — specifically NOT ${notThis || "generic or forgettable"}. Study what resonates with this demographic but avoid what competitors already own (${ctx.competitorColors.slice(0, 6).join(", ") || "unknown"}).`,
-    );
-  } else {
-    directions.push(
-      `EXPERIENCE-LED: The brand wants to be famous for "${ctx.brief.famousFor}". Build a palette that would make sense on a billboard advertising exactly that. The tone is ${ctx.brief.tone.join(", ")} — the experience is ${ctx.brief.experience.join(", ")}.`,
-    );
-  }
-
-  // Direction 3: Competitive white-space — deliberately differentiate
-  if (ctx.competitorColors.length > 0 || ctx.competitorStyles.length > 0) {
-    const avoidColors = ctx.competitorColors.slice(0, 8).join(", ");
-    const avoidStyles = ctx.competitorStyles.slice(0, 5).join(", ");
-    const weakness = ctx.brief.notThis[0] || "generic";
-    directions.push(
-      `DIFFERENTIATION-LED: The competitive landscape uses these colors: ${avoidColors || "unknown"}. Their visual styles: ${avoidStyles || "unknown"}. Find the WHITE SPACE — the colors NO competitor owns. If they're all cool-toned, go warm. If they're muted, go vivid. The brand wants to be the opposite of "${weakness}". Create a palette that would make this brand instantly recognizable next to its competitors.`,
-    );
-  } else {
-    const experience = ctx.brief.experience.join(", ");
-    directions.push(
-      `INNOVATION-LED: With no direct competitor visual data to avoid, go bold. Build a palette that would define and OWN the visual space for "${ctx.brand.description}". The brand experience is: ${experience}. Create colors that would become synonymous with this brand — the way Tiffany owns blue or Hermès owns orange.`,
-    );
-  }
-
-  return directions;
+  return `DIMENSION 1 — ARCHETYPE & PERSONALITY (what the brand IS)
+${parts.join("\n")}
+→ Design implication: What visual language naturally expresses these qualities?`;
 }
 
-function deriveFontDirections(ctx: BrandContext): string[] {
-  const directions: string[] = [];
+function buildDimension2(ctx: BrandContext): string {
+  // AUDIENCE & CHANNELS — who sees it and where
+  const parts: string[] = [];
 
-  // Direction 1: Archetype-expressive
-  if (ctx.primary && ctx.secondary) {
-    directions.push(
-      `ARCHETYPE EXPRESSION: The heading font must embody ${ctx.primary.name}'s ${ctx.primary.keywords[0].toLowerCase()} quality while the body font carries ${ctx.secondary.name}'s ${ctx.secondary.keywords[2]?.toLowerCase() || ctx.secondary.keywords[0].toLowerCase()} quality. ${ctx.primary.name} brands like ${ctx.primary.examples.slice(0, 2).join(", ")} tend toward ${ctx.primary.keywords[1].toLowerCase()} typography — find that energy but make it unique to "${ctx.brand.name}".`,
-    );
-  } else {
-    directions.push(
-      `BRAND EXPRESSION: Typography should directly express "${ctx.brief.famousFor}". The heading font is the brand's voice — it speaks ${ctx.brief.tone.join(", ")}. The body font is functional but still on-brand.`,
-    );
+  if (ctx.personaAgeRanges.length > 0) {
+    parts.push(`Age ranges: ${ctx.personaAgeRanges.join(", ")}`);
+  }
+  if (ctx.personaChannels.length > 0) {
+    parts.push(`Primary channels: ${ctx.personaChannels.join(", ")}`);
+  }
+  if (ctx.personas) {
+    parts.push(`Personas:\n  ${ctx.personas}`);
+  }
+  if (ctx.brand.salesChannels?.length) {
+    parts.push(`Sales channels: ${ctx.brand.salesChannels.join(", ")}`);
+  }
+  if (parts.length === 0) {
+    parts.push(`General audience — no specific persona data`);
   }
 
-  // Direction 2: Channel-optimized for target audience
-  const channels = ctx.personaChannels;
-  const hasSocial = channels.some((c) =>
-    ["Instagram", "TikTok", "Twitter/X"].includes(c),
-  );
-  const hasProfessional = channels.some((c) =>
-    ["LinkedIn", "Blogs", "Events"].includes(c),
-  );
-  if (hasSocial && hasProfessional) {
-    directions.push(
-      `VERSATILE PAIRING: The audience spans social (${channels.filter((c) => ["Instagram", "TikTok", "Twitter/X"].includes(c)).join(", ")}) AND professional (${channels.filter((c) => ["LinkedIn", "Blogs", "Events"].includes(c)).join(", ")}) channels. Pick a heading font with enough personality for social content but enough gravitas for professional contexts. The body font must be crystal-clear at small sizes on mobile.`,
-    );
-  } else if (hasSocial) {
-    directions.push(
-      `SOCIAL-FIRST: The audience lives on ${channels.slice(0, 3).join(", ")}. Typography needs to be bold, scannable, and impactful at phone-screen sizes. Heading font should work as display text on Stories, Reels, and posts. Think expressive and contemporary.`,
-    );
-  } else {
-    directions.push(
-      `CONTENT-FIRST: The brand communicates through ${channels.slice(0, 3).join(", ") || ctx.brand.salesChannels?.join(", ") || "long-form content"}. Prioritize reading comfort and intellectual authority. The heading font should command attention; the body font should be effortless to read for paragraphs.`,
-    );
-  }
+  return `DIMENSION 2 — AUDIENCE & CHANNELS (who sees it and where)
+${parts.join("\n")}
+→ Design implication: What resonates with this audience on these platforms?`;
+}
 
-  // Direction 3: Competitive differentiation
+function buildDimension3(ctx: BrandContext): string {
+  // COMPETITIVE LANDSCAPE — what's already taken
+  const parts: string[] = [];
+
+  if (ctx.competitorColors.length > 0) {
+    parts.push(`Competitor colors in use: ${ctx.competitorColors.join(", ")}`);
+  }
   if (ctx.competitorFonts.length > 0) {
-    directions.push(
-      `DIFFERENTIATION: Competitors use: ${ctx.competitorFonts.join(", ")}. Choose fonts that are DISTINCTLY different — if they use geometric sans-serifs, consider humanist or serif alternatives. If they use traditional serifs, consider modern or grotesque options. The brand must look different at a glance.`,
-    );
-  } else {
-    directions.push(
-      `CATEGORY DISRUPTION: Without competitor font data, aim to set a new typographic standard for "${ctx.brand.description}". The pairing should feel like it could only belong to this brand — not a template, not an industry default.`,
-    );
+    parts.push(`Competitor fonts in use: ${ctx.competitorFonts.join(", ")}`);
+  }
+  if (ctx.competitorStyles.length > 0) {
+    parts.push(`Competitor visual styles: ${ctx.competitorStyles.join(", ")}`);
+  }
+  if (ctx.competitors) {
+    parts.push(`Competitor details:\n  ${ctx.competitors}`);
+  }
+  if (parts.length === 0) {
+    parts.push(`No competitor visual data available — opportunity to define the category`);
   }
 
-  return directions;
+  return `DIMENSION 3 — COMPETITIVE LANDSCAPE (what's already taken)
+${parts.join("\n")}
+→ Design implication: Where is the visual whitespace? What's ownable?`;
+}
+
+function buildDimension4(ctx: BrandContext): string {
+  // CREATIVE BRIEF — the desired expression
+  return `DIMENSION 4 — CREATIVE BRIEF (the desired expression)
+Visual traits: ${ctx.brief.traits.join(", ")}
+Tone: ${ctx.brief.tone.join(", ")}
+Experience: ${ctx.brief.experience.join(", ")}
+Famous for: "${ctx.brief.famousFor}"
+→ Design implication: What visual choices create this specific experience and tone?`;
+}
+
+function buildDimension5(ctx: BrandContext): string {
+  // ANTI-REFERENCES — what the brand must NOT be
+  return `DIMENSION 5 — ANTI-REFERENCES (what the brand must NOT be)
+NOT this: ${ctx.brief.notThis.join(", ")}
+${ctx.competitorColors.length > 0 ? `Competitor colors to avoid: ${ctx.competitorColors.join(", ")}` : ""}
+${ctx.competitorFonts.length > 0 ? `Competitor fonts to avoid: ${ctx.competitorFonts.join(", ")}` : ""}
+→ Design implication: What directions are off-limits? What defines the boundaries?`;
 }
 
 // ─── Prompt: Colors (Claude Opus) ───
@@ -231,48 +272,49 @@ export function buildColorPrompt(
   optionIndex: number,
 ): string {
   const ctx = buildContext(project);
-  const directions = deriveColorDirections(ctx);
-  const direction = directions[optionIndex] || directions[0];
+  const philosophy = CREATIVE_PHILOSOPHIES[optionIndex] || CREATIVE_PHILOSOPHIES[0];
 
-  return `You are an elite brand designer creating a 4-color palette for "${ctx.brand.name}".
-This is Option ${optionIndex + 1} of 3 — each option must take a FUNDAMENTALLY different approach.
+  const otherLabels = CREATIVE_PHILOSOPHIES
+    .filter((_, i) => i !== optionIndex)
+    .map((p) => `"${p.label}"`)
+    .join(" and ");
 
-═══ CREATIVE DIRECTION FOR THIS OPTION ═══
-${direction}
+  return `You are an elite brand designer. Your task has two phases.
 
-═══ BRAND IDENTITY ═══
-Name: ${ctx.brand.name}
-What they do: ${ctx.brand.description}
-Mission: ${ctx.brand.mission}
-Vision: ${ctx.brand.vision}
-Business model: ${(ctx.brand.businessModels || []).join(", ")}${ctx.brand.businessModelCustom ? ` (${ctx.brand.businessModelCustom})` : ""}
-Sales channels: ${(ctx.brand.salesChannels || []).join(", ")}
-${ctx.brand.pricingNotes ? `Pricing strategy: ${ctx.brand.pricingNotes}` : ""}
+═══ PHASE 1: ANALYZE each dimension independently ═══
 
-═══ BRAND PERSONALITY ═══
-${ctx.archetypeCombination}
-${ctx.personalitySummary ? `\nPersonality narrative: ${ctx.personalitySummary}` : ""}
+Read each dimension. For each one, determine what it implies for COLOR choices.
+Do this analysis internally before making any decisions.
 
-═══ CREATIVE BRIEF ═══
-Visual traits the brand WANTS: ${ctx.brief.traits.join(", ")}
-Tone of voice: ${ctx.brief.tone.join(", ")}
-Brand experience: ${ctx.brief.experience.join(", ")}
-Famous for: "${ctx.brief.famousFor}"
-NOT this (anti-references): ${ctx.brief.notThis.join(", ")}
+${buildDimension1(ctx)}
 
-═══ TARGET AUDIENCE ═══
-${ctx.personas || "No personas defined"}
+${buildDimension2(ctx)}
 
-═══ COMPETITIVE LANDSCAPE ═══
-${ctx.competitors || "No competitors analyzed"}
-${ctx.competitorColors.length > 0 ? `\nAll competitor colors to AVOID: ${ctx.competitorColors.join(", ")}` : ""}
+${buildDimension3(ctx)}
+
+${buildDimension4(ctx)}
+
+${buildDimension5(ctx)}
+
+═══ PHASE 2: CREATE a 4-color palette through the lens of "${philosophy.label}" ═══
+
+This is Option ${optionIndex + 1} of 3. Each option interprets the SAME brand through a different creative philosophy.
+
+YOUR PHILOSOPHY:
+${philosophy.briefing}
+
+The other two options are ${otherLabels}. Your palette must look and feel DISTINCTLY DIFFERENT from what those philosophies would produce. If you can imagine the other options arriving at a similar palette, you haven't pushed far enough.
+
+═══ BRAND CONTEXT ═══
+"${ctx.brand.name}" — ${ctx.brand.description}
+Mission: "${ctx.brand.mission}"
+${ctx.archetypeCombination || ""}
 
 ═══ REQUIREMENTS ═══
 - Exactly 4 colors: Primary (dominant brand color), Secondary (supporting/contrast), Accent (highlights/CTAs), Dark (text/backgrounds)
-- Each color must DIRECTLY tie back to a specific brand attribute above — no arbitrary choices
+- Each color must trace back to a SPECIFIC dimension + your philosophy — no arbitrary choices
 - Colors must have sufficient contrast for accessibility (WCAG AA)
-- Must NOT overlap with competitor colors listed above
-- Return valid hex codes and a creative, brand-specific name for each (not generic names like "Ocean Blue" — name them after what makes THIS brand unique)
+- Give each color a creative name tied to THIS brand (not generic names like "Ocean Blue")
 ${WCAG_CONTRAST_RULES}
 
 Return JSON:
@@ -292,7 +334,7 @@ Return JSON:
 }
 \`\`\`
 
-"reasoning" must be exactly 3 bullets (max 15 words each) connecting each color choice to a SPECIFIC brand attribute from above.
+"reasoning" must be exactly 3 bullets (max 15 words each) connecting color choices to specific dimensions + the "${philosophy.label}" philosophy.
 Respond with ONLY the JSON wrapped in \`\`\`json code fences.`;
 }
 
@@ -303,45 +345,48 @@ export function buildFontPrompt(
   optionIndex: number,
 ): string {
   const ctx = buildContext(project);
-  const directions = deriveFontDirections(ctx);
-  const direction = directions[optionIndex] || directions[0];
+  const philosophy = CREATIVE_PHILOSOPHIES[optionIndex] || CREATIVE_PHILOSOPHIES[0];
 
-  return `You are a typography director selecting a font pairing for "${ctx.brand.name}".
-This is Option ${optionIndex + 1} of 3 — each must take a FUNDAMENTALLY different typographic approach.
+  const otherLabels = CREATIVE_PHILOSOPHIES
+    .filter((_, i) => i !== optionIndex)
+    .map((p) => `"${p.label}"`)
+    .join(" and ");
 
-═══ CREATIVE DIRECTION FOR THIS OPTION ═══
-${direction}
+  return `You are a typography director. Your task has two phases.
 
-═══ BRAND IDENTITY ═══
-Name: ${ctx.brand.name}
-What they do: ${ctx.brand.description}
-Mission: ${ctx.brand.mission}
-${ctx.brand.pricingNotes ? `Pricing: ${ctx.brand.pricingNotes}` : ""}
-Sales channels: ${(ctx.brand.salesChannels || []).join(", ")}
+═══ PHASE 1: ANALYZE each dimension independently ═══
 
-═══ BRAND PERSONALITY ═══
-${ctx.archetypeCombination}
-${ctx.personalitySummary ? `\nPersonality: ${ctx.personalitySummary}` : ""}
+Read each dimension. For each one, determine what it implies for TYPOGRAPHY choices.
+Do this analysis internally before making any decisions.
 
-═══ CREATIVE BRIEF ═══
-Visual traits: ${ctx.brief.traits.join(", ")}
-Tone: ${ctx.brief.tone.join(", ")}
-Experience: ${ctx.brief.experience.join(", ")}
-Famous for: "${ctx.brief.famousFor}"
-NOT this: ${ctx.brief.notThis.join(", ")}
+${buildDimension1(ctx)}
 
-═══ AUDIENCE ═══
-Age ranges: ${ctx.personaAgeRanges.join(", ") || "Mixed"}
-Primary channels: ${ctx.personaChannels.join(", ") || "Not specified"}
+${buildDimension2(ctx)}
 
-═══ COMPETITOR FONTS TO AVOID ═══
-${ctx.competitorFonts.length > 0 ? ctx.competitorFonts.join(", ") : "No competitor font data — aim to set the standard for this category"}
+${buildDimension3(ctx)}
+
+${buildDimension4(ctx)}
+
+${buildDimension5(ctx)}
+
+═══ PHASE 2: SELECT a font pairing through the lens of "${philosophy.label}" ═══
+
+This is Option ${optionIndex + 1} of 3. Each option interprets the SAME brand through a different creative philosophy.
+
+YOUR PHILOSOPHY:
+${philosophy.briefing}
+
+The other two options are ${otherLabels}. Your font pairing must feel CATEGORICALLY DIFFERENT from what those philosophies would produce.
+
+═══ BRAND CONTEXT ═══
+"${ctx.brand.name}" — ${ctx.brand.description}
+${ctx.archetypeCombination || ""}
 
 ═══ REQUIREMENTS ═══
 - Exactly 2 Google Fonts (freely available on Google Fonts)
-- Heading font: must express the brand archetype — ${ctx.primary?.name || "the brand"}'s ${ctx.primary?.keywords[0]?.toLowerCase() || "core"} quality should be visible in the letterforms
+- Heading font: must express this brand as seen through the "${philosophy.label}" philosophy
 - Body font: optimized for readability on ${ctx.personaChannels.includes("Instagram") || ctx.personaChannels.includes("TikTok") ? "mobile screens and social media" : ctx.personaChannels.includes("Blogs") ? "long-form reading on screens" : "screen and print"}
-- The pairing must feel like it belongs to THIS specific brand, not a template
+- The pairing must feel like it belongs to THIS brand through THIS philosophy, not a template
 - Must NOT use the same fonts as competitors
 
 Return JSON:
@@ -357,7 +402,7 @@ Return JSON:
 }
 \`\`\`
 
-"reasoning" must be exactly 3 bullets (max 15 words each) connecting font choices to specific brand attributes.
+"reasoning" must be exactly 3 bullets (max 15 words each) connecting font choices to specific dimensions + the "${philosophy.label}" philosophy.
 Respond with ONLY the JSON wrapped in \`\`\`json code fences.`;
 }
 

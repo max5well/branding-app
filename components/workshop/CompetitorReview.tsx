@@ -170,20 +170,20 @@ export default function CompetitorReview() {
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  {comp.brand?.faviconUrl ? (
+                  {comp.analyzed && comp.website ? (
                     <img
-                      src={comp.brand.faviconUrl}
+                      src={`https://www.google.com/s2/favicons?domain=${encodeURIComponent(new URL(comp.website.startsWith("http") ? comp.website : `https://${comp.website}`).hostname)}&sz=64`}
                       alt={`${comp.name || "Competitor"} favicon`}
-                      className="w-8 h-8 rounded-full object-contain bg-white ring-1 ring-border/30"
+                      className="w-8 h-8 rounded-md object-contain"
                       onError={(e) => {
                         e.currentTarget.style.display = "none";
-                        e.currentTarget.nextElementSibling?.classList.remove("hidden");
+                        (e.currentTarget.nextElementSibling as HTMLElement)?.classList.remove("hidden");
                       }}
                     />
                   ) : null}
                   <div className={cn(
                     "w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center",
-                    comp.brand?.faviconUrl && "hidden"
+                    comp.analyzed && comp.website && "hidden"
                   )}>
                     <Building2 className="w-4 h-4 text-primary" />
                   </div>
@@ -312,30 +312,6 @@ export default function CompetitorReview() {
                         </div>
                       </div>
 
-                      {/* Logo */}
-                      {(comp.brand.logoUrl || comp.brand.logoDescription) && (
-                        <div className="space-y-1.5">
-                          <Label className="text-xs">Logo</Label>
-                          {comp.brand.logoUrl ? (
-                            <div className="inline-block bg-white rounded-lg p-3 ring-1 ring-border/30">
-                              <img
-                                src={comp.brand.logoUrl}
-                                alt={`${comp.name || "Competitor"} logo`}
-                                className="max-h-12 max-w-[200px] object-contain"
-                                onError={(e) => {
-                                  // Fall back to description if image fails
-                                  const container = e.currentTarget.parentElement!;
-                                  container.innerHTML = `<p class="text-xs text-muted-foreground">${comp.brand!.logoDescription || "Logo could not be loaded"}</p>`;
-                                }}
-                              />
-                            </div>
-                          ) : (
-                            <p className="text-xs text-muted-foreground">
-                              {comp.brand.logoDescription}
-                            </p>
-                          )}
-                        </div>
-                      )}
                     </div>
                   )}
 

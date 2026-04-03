@@ -222,11 +222,7 @@ export async function analyzeCompetitor(
 - Secondary font (body text): Same rule — single font family name only.
 
 **Logo**
-- Describe the logo briefly
-- logoUrl: The direct URL to the logo image file (look for <img> in the header/navbar, or an SVG logo). Must be an absolute URL.
-
-**Favicon**
-- faviconUrl: The direct URL to the favicon (check <link rel="icon"> or <link rel="shortcut icon"> in the HTML head). Must be an absolute URL. If relative, prepend the site's origin.
+- Describe the logo briefly (shape, colors, style)
 
 ---
 
@@ -280,8 +276,6 @@ Return ONLY a JSON object wrapped in \`\`\`json code fences with this structure:
     "headingFont": "Actual Font Name",
     "bodyFont": "Actual Font Name",
     "logoDescription": "...",
-    "logoUrl": "https://... or null",
-    "faviconUrl": "https://... or null",
     "tagline": "... or null",
     "mission": "... or null",
     "vision": "... or null",
@@ -301,7 +295,6 @@ Return ONLY a JSON object wrapped in \`\`\`json code fences with this structure:
 IMPORTANT:
 - For fonts, return ONLY the single font family name (e.g. "Inter"), never CSS font stacks with fallbacks.
 - For socialMedia, only include channels you actually found linked on the website. Omit all others.
-- For logoUrl and faviconUrl, return absolute URLs. If not found, use null.
 - If something cannot be determined from the website, use null rather than guessing.`;
 
   const response = await callClaude(prompt);
